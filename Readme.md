@@ -5,4 +5,5 @@ _Last update: 29-06-2025_
 
 ** Install the requirement packet:
 ```bash
-python install -r requirement.txt
+python -m pip install -r requirements.txt
+
