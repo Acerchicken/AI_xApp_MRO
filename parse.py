@@ -2,7 +2,6 @@
 import pandas as pd
 import re
 from datetime import datetime
-import os
 
 def parse_log_file(filepath: str) -> pd.DataFrame:
     # Pattern để trích xuất dữ liệu từ mỗi dòng log
