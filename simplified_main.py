@@ -101,7 +101,7 @@ def main():
         return
 
     episodes=50       #Số lần agent lặp lại toàn bộ quá trình học từ đầu đến cuối qua môi trường
-    model_path = "ppo_handover_models.pth"    #Đường dẫn model có sẵn
+    model_path = "ppo_handover_model.pth"    #Đường dẫn model có sẵn
 
     if os.path.exists(model_path):
         print("Loading pretrained model...")

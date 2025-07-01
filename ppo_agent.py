@@ -170,6 +170,15 @@ class PPOAgent:
         #Giới hạn reward nhằm tránh chênh lệch quá lớn làm giảm giá trị học
         return np.clip(reward, -20.0, 20.0)
 
+    #Tính reward cộng dồn có chiết khấu 
+    def _calculate_discounted_rewards(self, rewards: torch.Tensor) -> torch.Tensor:
+        discounted_rewards = torch.zeros_like(rewards)
+        running_reward = 0
+        for t in reversed(range(len(rewards))):
+            running_reward = rewards[t] + self.gamma * running_reward
+            discounted_rewards[t] = running_reward
+        return discounted_rewards
+    
     def update(self):
         if len(self.memory) < 32:
             return
@@ -221,15 +230,6 @@ class PPOAgent:
         
         #Dọn bộ nhớ
         self.memory = []
-
-    #Tính reward cộng dồn có chiết khấu 
-    def _calculate_discounted_rewards(self, rewards: torch.Tensor) -> torch.Tensor:
-        discounted_rewards = torch.zeros_like(rewards)
-        running_reward = 0
-        for t in reversed(range(len(rewards))):
-            running_reward = rewards[t] + self.gamma * running_reward
-            discounted_rewards[t] = running_reward
-        return discounted_rewards
 
     #Lưu toàn bộ trạng thái của agent (mạng và optimizer) xuống file để có thể khôi phục sau này
     def save_model(self, path: str):
