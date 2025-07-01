@@ -1,0 +1,5 @@
+apiVersion: v2
+name: mro-xapp
+description: A PPO-based MRO xApp for Near-RT RIC
+version: 0.1.0
+appVersion: "1.0"
