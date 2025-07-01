@@ -3,7 +3,7 @@ from parse import parse_log_file
 from detect_pingpong import detect_ping_pong
 from ppo_agent import PPOAgent, HandoverEnvironment
 import pandas as pd
-
+import os
 
 def evaluate_performance(df: pd.DataFrame) -> dict:
     if len(df) == 0:
@@ -69,6 +69,7 @@ def train_ppo_agent(df: pd.DataFrame, action_spaces: dict, ppo_config: dict, epi
         #Lưu model tốt nhất nếu reward cao hơn trước:
         if total_reward > best_reward:
             best_reward = total_reward
+            #print(best_reward)
             agent.save_model("ppo_handover_model.pth")
 
     return agent
@@ -99,13 +100,19 @@ def main():
         print("Error reading log file:", e)
         return
 
-    #Số lần agent lặp lại toàn bộ quá trình học từ đầu đến cuối qua môi trường
-    episodes=20
+    episodes=50       #Số lần agent lặp lại toàn bộ quá trình học từ đầu đến cuối qua môi trường
+    model_path = "ppo_handover_models.pth"    #Đường dẫn model có sẵn
 
-    agent = train_ppo_agent(df, action_spaces, ppo_config, episodes)
-    print("Training completed.")
+    if os.path.exists(model_path):
+        print("Loading pretrained model...")
+        agent = PPOAgent(state_dim=15, action_spaces=action_spaces, **ppo_config)
+        agent.load_model(model_path)
+    else:
+        print("No pretrained model found. Training new agent...")
+        agent = train_ppo_agent(df, action_spaces, ppo_config, episodes)
+        print("Training completed.")    
 
-        # === Xuất ra cặp tham số hiệu quả nhất ===
+    # === Xuất ra cặp tham số hiệu quả nhất ===
     print("\n=== Recommended Optimal Parameters ===")
     best_action_idx, _ = agent.select_action(agent.get_state_vector(df), explore=False)
     best_params = agent.action_index_to_params(best_action_idx)
